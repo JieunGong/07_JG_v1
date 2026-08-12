@@ -135,7 +135,6 @@
     <!-- 자바스크립트 로직 -->
     <script>
         // GitHub 환경변수 연동을 고려한 환경설정 변수 분리
-        // (로컬 혹은 단순 HTML 실행 시에는 아래 문자열이 그대로 사용됩니다)
         const SUPABASE_URL = window.process?.env?.SUPABASE_URL || "https://fbjkiornlqshbrkeovbu.supabase.co";
         const SUPABASE_KEY = window.process?.env?.SUPABASE_KEY || "sb_publishable_spFZwW8boZJkpOo1HA5Wcg_nReKh-04";
 
@@ -166,7 +165,7 @@
             }
         }
 
-        // 회원가입 비즈니스 로직 및 벨리데이션
+        // 회원가입 비즈니스 로직 및 벨리데이션 (영문 최소 1개 포함 및 6자리 검증 수정완료)
         async function handleSignup(e) {
             e.preventDefault();
 
@@ -184,10 +183,12 @@
                 return;
             }
 
-            // 2. 비밀번호 제약 조건 검증 (6자리 이상, 영문 1개 이상 필수)
-            const passwordRegex = /^(?=.*[a-zA-Z]).{6,}$/;
-            if (!passwordRegex.test(password)) {
-                alert('비밀번호는 영문(영어)을 최소 1개 이상 포함하여 6자리 이상으로 작성해 주세요.');
+            // 2. 비밀번호 제약 조건 검증 (영문 포함 여부와 글자 수 독립 체크)
+            const hasLetter = /[a-zA-Z]/.test(password); // 영어 알파벳 포함 여부
+            const isLongEnough = password.length >= 6;   // 6자리 이상 여부
+
+            if (!hasLetter || !isLongEnough) {
+                alert('비밀번호는 영문(영어)을 최소 1개 이상 포함하여 6자리 이상으로 작성해야 합니다.');
                 return;
             }
 
