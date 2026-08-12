@@ -1,65 +1,88 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>회원가입 · 회원관리</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root{--bg:#eeeeee;--card:#fff;--text:#27252a;--muted:#706c72;--line:#ddd9dc;--primary:#7b1e3a;--primary2:#5f1730;--danger:#b42318;--ok:#087443;--shadow:0 18px 50px rgba(55,35,42,.08)}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    .wrap{max-width:1100px;margin:0 auto;padding:42px 20px}.hero{margin-bottom:24px}.eyebrow{font-size:13px;color:var(--primary);font-weight:800;letter-spacing:.08em}.hero h1{font-size:34px;margin:8px 0}.hero p{margin:0;color:var(--muted)}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:var(--shadow)}
-    h2{font-size:21px;margin:0 0 8px}.desc{font-size:14px;color:var(--muted);margin:0 0 24px}
-    label{display:block;font-size:14px;font-weight:700;margin:17px 0 8px}.req{color:var(--danger)} input{width:100%;height:48px;border:1px solid var(--line);border-radius:10px;padding:0 13px;font-size:15px;outline:none;background:#fff}
-    input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(123,30,58,.10)} .pw-row{display:grid;grid-template-columns:1fr auto;gap:8px}.pw-row button{width:70px}
-    button{height:48px;border:0;border-radius:10px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;padding:0 16px}button:hover{background:var(--primary2)}button.secondary{background:#f4e9ed;color:#7b1e3a}button.danger{background:#fff0ee;color:var(--danger);border:1px solid #ffd2cd}
-    button:disabled{opacity:.55;cursor:not-allowed}.meter{height:6px;background:#edf0f5;border-radius:99px;margin-top:9px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:#ef4444;transition:.2s}
-    .hint{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.5}.message{display:none;border-radius:10px;padding:11px 13px;font-size:13px;margin:14px 0;line-height:1.5}.message.show{display:block}.error{background:#fff0ee;color:#b42318}.success{background:#ecfdf3;color:#067647}.info{background:#f4e9ed;color:#7b1e3a}
-    .checks{margin-top:20px;border:1px solid var(--line);border-radius:12px;padding:14px}.check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.5;margin:8px 0}.check input{width:18px;height:18px;margin:0;flex:0 0 auto}
-    .full{grid-column:1/-1}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:15px}.toolbar .actions{display:flex;gap:8px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}th,td{padding:13px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{background:#f7f5f6;color:#4d484d}tr:last-child td{border-bottom:0}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#ecfdf3;color:#067647;font-size:11px;font-weight:800}
-    .admin-only{display:none}.footer{margin-top:20px;color:var(--muted);font-size:12px}.topbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:18px}.hidden{display:none!important}
-    @media(max-width:800px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.hero h1{font-size:28px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>회원가입 · 회원관리</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#eeeeee;--card:#ffffff;--text:#29262a;--muted:#716b71;--line:#ddd9dc;
+  --burgundy:#7b1e3a;--burgundy-dark:#5c162c;--burgundy-soft:#f5e9ee;
+  --danger:#b42318;--success:#067647;--shadow:0 18px 48px rgba(60,30,42,.08)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Noto Sans KR",system-ui,sans-serif}
+.wrap{max-width:1120px;margin:auto;padding:42px 20px 60px}
+.hero{margin-bottom:24px}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;color:var(--burgundy)}
+h1{font-size:34px;margin:8px 0}.hero p,.desc{color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:var(--shadow)}
+.full{grid-column:1/-1}h2{font-size:21px;margin:0 0 7px}
+label{display:block;font-size:14px;font-weight:700;margin:17px 0 8px}
+.req{color:var(--danger)}input{width:100%;height:48px;border:1px solid var(--line);border-radius:10px;padding:0 13px;font-size:15px;outline:0;background:#fff}
+input:focus{border-color:var(--burgundy);box-shadow:0 0 0 3px rgba(123,30,58,.1)}
+button{height:48px;border:0;border-radius:10px;background:var(--burgundy);color:#fff;font-weight:800;padding:0 18px;cursor:pointer}
+button:hover{background:var(--burgundy-dark)}button:disabled{opacity:.55;cursor:not-allowed}
+button.secondary{background:var(--burgundy-soft);color:var(--burgundy)}
+.pwrow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.meter{height:6px;background:#eee;border-radius:99px;margin-top:9px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:var(--burgundy);transition:.2s}
+.hint{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px}
+.message{display:none;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.55;margin:14px 0}.message.show{display:block}
+.error{background:#fff0ee;color:#b42318}.success{background:#ecfdf3;color:#067647}.info{background:var(--burgundy-soft);color:var(--burgundy)}
+.checkbox{margin-top:20px;border:1px solid var(--line);border-radius:12px;padding:14px}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.5}.check input{width:18px;height:18px;flex:none;margin:0}.check label{margin:0;font-weight:500}
+.topbar{display:flex;justify-content:flex-end;margin-bottom:16px}.hidden{display:none!important}
+.admin{display:none}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:15px}
+.actions{display:flex;gap:8px;align-items:center}.actions input{width:220px;height:42px}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;min-width:760px;border-collapse:collapse}
+th,td{padding:13px;border-bottom:1px solid var(--line);font-size:13px;text-align:left}th{background:#f7f5f6;color:#4d484d}
+tr:last-child td{border-bottom:0}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#ecfdf3;color:#067647;font-size:11px;font-weight:800}
+.footer{font-size:12px;color:var(--muted);margin-top:20px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.toolbar{display:block}.actions{margin-top:12px}.actions input{width:100%}h1{font-size:28px}}
+</style>
 </head>
 <body>
 <div class="wrap">
   <div class="hero">
     <div class="eyebrow">MEMBERSHIP</div>
     <h1>회원가입 · 회원관리</h1>
-    <p>이메일 기반 계정 생성과 개인정보 동의, 관리자 회원 조회를 한 화면에서 관리합니다.</p>
+    <p>이메일 기반 계정 생성과 개인정보 동의, 관리자 회원 조회를 관리합니다.</p>
   </div>
 
-  <div class="topbar">
-    <button id="logoutBtn" class="secondary hidden">로그아웃</button>
-  </div>
+  <div class="topbar"><button id="logoutBtn" class="secondary hidden">로그아웃</button></div>
 
   <div class="grid">
-    <section class="card" id="signupCard">
+    <section class="card">
       <h2>회원가입</h2>
-      <p class="desc">가입 후 이메일 인증을 완료해야 정상적인 계정으로 사용할 수 있습니다.</p>
-
+      <p class="desc">이메일 인증을 완료해야 정상적으로 인증된 계정이 됩니다.</p>
       <div id="signupMsg" class="message"></div>
 
       <label for="email">이메일 <span class="req">*</span></label>
       <input id="email" type="email" autocomplete="email" placeholder="example@company.com">
 
       <label for="password">비밀번호 <span class="req">*</span></label>
-      <div class="pw-row"><input id="password" type="password" autocomplete="new-password" placeholder="영문 대문자 + 숫자 + 특수문자 포함"><button type="button" class="secondary" id="togglePw">보기</button></div>
-      <div class="meter"><i id="meterBar"></i></div>
-      <div id="pwHint" class="hint">중간 이상: 대문자 1개 이상 + 숫자 1개 이상 + 특수문자 1개 이상 + 8자 이상</div>
+      <div class="pwrow">
+        <input id="password" type="password" autocomplete="new-password" placeholder="대문자 + 숫자 + 특수문자 포함">
+        <button id="togglePw" type="button" class="secondary">보기</button>
+      </div>
+      <div class="meter"><i id="meter"></i></div>
+      <div id="pwHint" class="hint">8자 이상 · 영문 대문자 1개 이상 · 숫자 1개 이상 · 특수문자 1개 이상</div>
 
       <label for="password2">비밀번호 확인 <span class="req">*</span></label>
       <input id="password2" type="password" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력">
 
       <label for="name">이름 <span class="req">*</span></label>
-      <input id="name" type="text" autocomplete="name" maxlength="50" placeholder="홍길동">
+      <input id="name" type="text" maxlength="50" autocomplete="name" placeholder="홍길동">
 
       <label for="phone">전화번호 <span class="req">*</span></label>
-      <input id="phone" type="tel" autocomplete="tel" maxlength="20" placeholder="010-1234-5678">
+      <input id="phone" type="tel" maxlength="20" autocomplete="tel" placeholder="010-1234-5678">
 
-      <div class="checks">
-        <div class="check"><input id="privacy" type="checkbox"><label for="privacy" style="margin:0;font-weight:500">개인정보 수집·이용에 동의합니다. <span class="req">*</span></label></div>
+      <div class="checkbox">
+        <div class="check">
+          <input id="privacy" type="checkbox">
+          <label for="privacy">개인정보 수집·이용에 동의합니다. <span class="req">*</span></label>
+        </div>
         <div class="hint">수집항목: 이름, 전화번호 / 목적: 회원 식별 및 회원관리 / 보유기간: 회원 탈퇴 시까지(법령상 보존기간이 있는 경우 해당 기간)</div>
       </div>
 
@@ -68,145 +91,180 @@
 
     <section class="card">
       <h2>관리자 로그인</h2>
-      <p class="desc">관리자 계정으로 로그인하면 아래 회원관리 화면에서 가입 회원을 조회할 수 있습니다.</p>
+      <p class="desc">관리자 권한이 있는 계정만 회원관리 화면에 접근할 수 있습니다.</p>
       <div id="loginMsg" class="message"></div>
       <label for="loginEmail">이메일</label>
       <input id="loginEmail" type="email" autocomplete="username" placeholder="관리자 이메일">
       <label for="loginPassword">비밀번호</label>
       <input id="loginPassword" type="password" autocomplete="current-password" placeholder="비밀번호">
       <button id="loginBtn" style="width:100%;margin-top:18px">로그인</button>
-      <div class="hint" style="margin-top:14px">관리자 여부는 DB의 profiles.is_admin 값과 RLS 정책으로 서버에서 확인합니다.</div>
+      <div class="hint">관리자 권한은 Supabase의 profiles.is_admin 값으로 서버에서 확인합니다.</div>
     </section>
 
-    <section class="card full admin-only" id="adminPanel">
+    <section class="card full admin" id="adminPanel">
       <div class="toolbar">
-        <div><h2>회원관리</h2><p class="desc" style="margin:5px 0 0">관리자 권한이 있는 계정만 회원 정보를 조회할 수 있습니다.</p></div>
-        <div class="actions"><input id="search" style="height:42px;width:220px" placeholder="이메일/이름 검색"><button id="refreshBtn" class="secondary">새로고침</button></div>
+        <div><h2>회원관리</h2><p class="desc" style="margin:5px 0 0">가입 회원의 기본 정보를 조회합니다.</p></div>
+        <div class="actions"><input id="search" placeholder="이메일 / 이름 검색"><button id="refreshBtn" class="secondary">새로고침</button></div>
       </div>
       <div id="adminMsg" class="message"></div>
-      <div class="table-wrap">
-        <table><thead><tr><th>이메일</th><th>이름</th><th>전화번호</th><th>개인정보 동의</th><th>가입일</th><th>이메일 인증</th></tr></thead>
-        <tbody id="memberRows"><tr><td colspan="6">조회 중...</td></tr></tbody></table>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>이메일</th><th>이름</th><th>전화번호</th><th>개인정보 동의</th><th>가입일</th><th>이메일 인증</th></tr></thead>
+          <tbody id="rows"><tr><td colspan="6">로그인 후 관리자 권한을 확인합니다.</td></tr></tbody>
+        </table>
       </div>
     </section>
   </div>
-  <div class="footer">Supabase 연결 정보는 이 파일의 CONFIG 영역에서 설정합니다. Publishable key는 브라우저에 노출되어도 되지만 Service Role Key는 절대 넣지 마세요.</div>
+  <div class="footer">Supabase Publishable Key는 브라우저에서 사용하는 공개 클라이언트 키입니다. Service Role Key는 절대 이 파일에 넣지 마세요.</div>
 </div>
 
 <script>
 (() => {
-  // ============================================================
-  // CONFIG
-  // 1) GitHub Actions 등 빌드 과정에서 아래 값을 주입하거나
-  // 2) 테스트 시 직접 입력하세요.
-  // 정적 GitHub Pages는 서버 환경변수를 브라우저에서 직접 읽을 수 없습니다.
-  // 따라서 공개 가능한 Supabase URL + Publishable Key만 클라이언트에 들어갑니다.
-  // ============================================================
   const SUPABASE_URL = window.SUPABASE_URL || "https://fbjkiornlqshbrkeovbu.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = window.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_spFZwW8boZJkpOo1HA5Wcg_nReKh-04";
-
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const SUPABASE_KEY = window.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_spFZwW8boZJkpOo1HA5Wcg_nReKh-04";
+  const {createClient} = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const $ = id => document.getElementById(id);
-  const show = (el, text, type="info") => { el.textContent=text; el.className=`message show ${type}`; };
-  const hide = el => { el.className="message"; };
-  const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-  const validPassword = v => /^(?=.{8,}$)(?=.*[A-Z])(?=.*\d)(?=.*[!@\$^\*#%&?])[A-Za-z\d!@\$^\*#%&?]+$/.test(v);
-  const validPhone = v => /^01[016789]-?\d{3,4}-?\d{4}$/.test(v.replace(/\s/g,""));
+  const msg = (el,text,type="info") => {el.textContent=text;el.className="message show "+type};
+  const clear = el => {el.textContent="";el.className="message"};
+  const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+  const emailOK = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  const passwordOK = v => /^(?=.{8,}$)(?=.*[A-Z])(?=.*\d)(?=.*[!@#$^*%&?]).+$/.test(v);
+  const phoneOK = v => /^01[016789]-?\d{3,4}-?\d{4}$/.test(v.replace(/\s/g,""));
 
-  $("togglePw").onclick = () => {
-    const p=$("password"); p.type=p.type==="password"?"text":"password"; $("togglePw").textContent=p.type==="password"?"보기":"숨기기";
+  $("togglePw").onclick=()=>{
+    const x=$("password"); x.type=x.type==="password"?"text":"password";
+    $("togglePw").textContent=x.type==="password"?"보기":"숨기기";
   };
-
-  $("password").oninput = () => {
+  $("password").oninput=()=>{
     const v=$("password").value;
-    let score=0;
-    if(v.length>=8) score++; if(/[A-Z]/.test(v)) score++; if(/\d/.test(v)) score++; if(/[!@\$^\*#%&?]/.test(v)) score++; if(v.length>=12) score++;
-    $("meterBar").style.width = `${score*20}%`;
-    $("pwHint").textContent = score>=4 ? "비밀번호 난이도: 중 이상" : "대문자 1개 이상 + 숫자 1개 이상 + 특수문자 1개 이상 + 8자 이상";
+    let n=0;if(v.length>=8)n++;if(/[A-Z]/.test(v))n++;if(/\d/.test(v))n++;if(/[!@#$^*%&?]/.test(v))n++;if(v.length>=12)n++;
+    $("meter").style.width=(n*20)+"%";
+    $("pwHint").textContent=n>=4?"비밀번호 난이도: 중 이상":"8자 이상 · 영문 대문자 1개 이상 · 숫자 1개 이상 · 특수문자 1개 이상";
   };
 
-  $("signupBtn").onclick = async () => {
-    const email=$("email").value.trim().toLowerCase(), password=$("password").value, password2=$("password2").value;
+  $("signupBtn").onclick=async()=>{
+    clear($("signupMsg"));
+    const email=$("email").value.trim().toLowerCase(), pw=$("password").value, pw2=$("password2").value;
     const name=$("name").value.trim(), phone=$("phone").value.trim();
-    hide($("signupMsg"));
-    if(!validEmail(email)) return show($("signupMsg"),"올바른 이메일 주소를 입력하세요.","error");
-    if(!validPassword(password)) return show($("signupMsg"),"비밀번호 조건을 충족하지 않습니다.","error");
-    if(password!==password2) return show($("signupMsg"),"비밀번호 확인이 일치하지 않습니다.","error");
-    if(name.length<1) return show($("signupMsg"),"이름을 입력하세요.","error");
-    if(!validPhone(phone)) return show($("signupMsg"),"올바른 전화번호를 입력하세요.","error");
-    if(!$("privacy").checked) return show($("signupMsg"),"개인정보 수집·이용 동의가 필요합니다.","error");
+    if(!emailOK(email))return msg($("signupMsg"),"올바른 이메일 주소를 입력하세요.","error");
+    if(!passwordOK(pw))return msg($("signupMsg"),"비밀번호 조건을 충족하지 않습니다.","error");
+    if(pw!==pw2)return msg($("signupMsg"),"비밀번호 확인이 일치하지 않습니다.","error");
+    if(!name)return msg($("signupMsg"),"이름을 입력하세요.","error");
+    if(!phoneOK(phone))return msg($("signupMsg"),"올바른 전화번호를 입력하세요.","error");
+    if(!$("privacy").checked)return msg($("signupMsg"),"개인정보 수집·이용 동의가 필요합니다.","error");
 
     $("signupBtn").disabled=true;
+    const redirect = window.location.href.split("#")[0];
     const {data,error}=await db.auth.signUp({
-      email,password,
-      options:{ data:{ full_name:name, phone } }
+      email,password:pw,
+      options:{emailRedirectTo:redirect,data:{full_name:name,phone:phone,privacy_consent:true}}
     });
     $("signupBtn").disabled=false;
 
     if(error){
-      const msg = /already registered|already exists|user already/i.test(error.message)
-        ? "이미 가입된 이메일입니다. 다른 이메일을 사용하세요."
-        : `가입 처리 중 오류가 발생했습니다: ${error.message}`;
-      return show($("signupMsg"),msg,"error");
+      let text="회원가입 중 오류가 발생했습니다.";
+      if(/password/i.test(error.message))text="비밀번호 정책을 확인하세요.";
+      else if(/email/i.test(error.message))text="이메일 주소를 확인하세요.";
+      else text+=" ("+error.message+")";
+      return msg($("signupMsg"),text,"error");
     }
-
-    // profiles / consent_logs INSERT는 SQL의 RLS 정책과 트리거가 처리합니다.
-    show($("signupMsg"),"가입 신청이 완료되었습니다. 입력한 이메일의 인증 메일을 확인해 이메일 인증을 완료하세요.","success");
-    $("password").value=""; $("password2").value="";
+    if(data.user && data.session===null){
+      msg($("signupMsg"),"가입 신청이 완료되었습니다. 입력한 이메일의 인증 메일을 확인해 인증을 완료하세요.","success");
+    }else{
+      msg($("signupMsg"),"회원가입이 완료되었습니다.","success");
+    }
   };
 
-  $("loginBtn").onclick = async () => {
-    hide($("loginMsg"));
-    const email=$("loginEmail").value.trim(), password=$("loginPassword").value;
-    if(!validEmail(email)||!password) return show($("loginMsg"),"이메일과 비밀번호를 입력하세요.","error");
+  $("loginBtn").onclick=async()=>{
+    clear($("loginMsg"));
+    const email=$("loginEmail").value.trim().toLowerCase(), pw=$("loginPassword").value;
+    if(!emailOK(email)||!pw)return msg($("loginMsg"),"이메일과 비밀번호를 입력하세요.","error");
     $("loginBtn").disabled=true;
-    const {error}=await db.auth.signInWithPassword({email,password});
+    const {error}=await db.auth.signInWithPassword({email,password:pw});
     $("loginBtn").disabled=false;
-    if(error) return show($("loginMsg"),`로그인 실패: ${error.message}`,"error");
-    await checkAdmin();
+    if(error){
+      const t=/invalid login credentials/i.test(error.message)?"이메일 또는 비밀번호가 올바르지 않습니다.":error.message;
+      return msg($("loginMsg"),t,"error");
+    }
+    await refreshSession();
   };
 
-  $("logoutBtn").onclick = async () => { await db.auth.signOut(); $("adminPanel").style.display="none"; $("logoutBtn").classList.add("hidden"); };
+  $("logoutBtn").onclick=async()=>{await db.auth.signOut();hideAdmin();msg($("loginMsg"),"로그아웃되었습니다.","info")};
+  $("refreshBtn").onclick=loadMembers;
+  $("search").oninput=()=>loadMembers();
 
-  $("refreshBtn").onclick = loadMembers;
-  $("search").oninput = loadMembers;
+  function hideAdmin(){
+    $("adminPanel").style.display="none";
+    $("logoutBtn").classList.add("hidden");
+    $("rows").innerHTML='<tr><td colspan="6">관리자 로그인 후 표시됩니다.</td></tr>';
+  }
 
-  async function checkAdmin(){
-    const {data:{user}}=await db.auth.getUser();
-    if(!user) return;
+  async function refreshSession(){
+    const {data:{user},error:userError}=await db.auth.getUser();
+    if(userError||!user){hideAdmin();return}
+
     $("logoutBtn").classList.remove("hidden");
-    const {data,error}=await db.from("profiles").select("is_admin").eq("id",user.id).single();
-    if(error || !data?.is_admin){
-      $("adminPanel").style.display="none";
-      show($("loginMsg"),"로그인했지만 관리자 권한이 없습니다.","error");
-      return;
+
+    const {data:profile,error}=await db
+      .from("profiles")
+      .select("is_admin")
+      .eq("id",user.id)
+      .maybeSingle();
+
+    if(error){
+      hideAdmin();
+      return msg($("loginMsg"),
+        "로그인은 성공했지만 회원 프로필을 확인하지 못했습니다. Supabase SQL을 먼저 적용해 주세요.\\nDB 오류: "+error.message,
+        "error");
     }
+    if(!profile){
+      hideAdmin();
+      return msg($("loginMsg"),
+        "로그인은 성공했지만 profiles에 회원 정보가 없습니다. SQL의 회원 프로필 트리거를 확인해 주세요.",
+        "error");
+    }
+    if(profile.is_admin!==true){
+      hideAdmin();
+      return msg($("loginMsg"),"로그인은 성공했지만 관리자 권한이 없습니다.","error");
+    }
+
     $("adminPanel").style.display="block";
-    show($("loginMsg"),"관리자 로그인 완료","success");
-    loadMembers();
+    msg($("loginMsg"),"관리자 로그인 완료","success");
+    await loadMembers();
   }
 
   async function loadMembers(){
     const {data:{user}}=await db.auth.getUser();
-    if(!user) return;
-    const q=$("search").value.trim();
-    let query=db.from("profiles").select("email,full_name,phone,privacy_consent,created_at,email_confirmed").order("created_at",{ascending:false}).limit(200);
-    if(q) query=query.or(`email.ilike.%${q}%,full_name.ilike.%${q}%`);
-    const {data,error}=await query;
-    if(error){ show($("adminMsg"),`회원 조회 실패: ${error.message}`,"error"); return; }
-    $("memberRows").innerHTML = data.length ? data.map(m=>`
-      <tr><td>${esc(m.email)}</td><td>${esc(m.full_name||"")}</td><td>${esc(m.phone||"")}</td>
-      <td>${m.privacy_consent ? '<span class="badge">동의</span>' : '미동의'}</td>
-      <td>${new Date(m.created_at).toLocaleString("ko-KR")}</td>
-      <td>${m.email_confirmed ? '<span class="badge">인증</span>' : '미인증'}</td></tr>`).join("")
-      : '<tr><td colspan="6">회원이 없습니다.</td></tr>';
-  }
-  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+    if(!user)return;
 
-  db.auth.onAuthStateChange((_event)=>setTimeout(checkAdmin,0));
-  checkAdmin();
+    const q=$("search").value.trim();
+    let query=db.from("profiles")
+      .select("email,full_name,phone,privacy_consent,created_at,email_confirmed")
+      .order("created_at",{ascending:false})
+      .limit(200);
+
+    if(q)query=query.or("email.ilike.%"+q+"%,full_name.ilike.%"+q+"%");
+
+    const {data,error}=await query;
+    if(error)return msg($("adminMsg"),"회원 조회 실패: "+error.message,"error");
+
+    $("rows").innerHTML=data.length?data.map(m=>`
+      <tr>
+        <td>${esc(m.email)}</td><td>${esc(m.full_name)}</td><td>${esc(m.phone)}</td>
+        <td>${m.privacy_consent?'<span class="badge">동의</span>':'미동의'}</td>
+        <td>${m.created_at?new Date(m.created_at).toLocaleString("ko-KR"):""}</td>
+        <td>${m.email_confirmed?'<span class="badge">인증</span>':'미인증'}</td>
+      </tr>`).join(""):'<tr><td colspan="6">회원이 없습니다.</td></tr>';
+  }
+
+  db.auth.onAuthStateChange((event)=>{
+    if(["SIGNED_IN","SIGNED_OUT","TOKEN_REFRESHED","USER_UPDATED"].includes(event)){
+      setTimeout(refreshSession,0);
+    }
+  });
+  refreshSession();
 })();
 </script>
 </body>
