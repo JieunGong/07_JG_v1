@@ -1,39 +1,283 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JG v1</title>
-    <style>
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        font-family: Arial, sans-serif;
-        background: #f5f7fb;
-        color: #1f2937;
-      }
-      .container {
-        text-align: center;
-        padding: 2rem 3rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      }
-      h1 {
-        margin-bottom: 0.5rem;
-      }
-      p {
-        margin: 0;
-        color: #4b5563;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>JG v1</h1>
-      <p>프로젝트 시작 페이지입니다.</p>
-    </div>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 관리 시스템 (Signup & Master Dashboard)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 font-sans antialiased text-gray-900 min-h-screen flex flex-col justify-between">
+
+    <!-- 상단 내비게이션 / 탭 메뉴 -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <h1 class="text-xl font-bold text-indigo-600 tracking-tight">Member Portal</h1>
+            <nav class="flex space-x-2">
+                <button id="tab-register-btn" onclick="switchTab('register')" class="px-4 py-2 text-sm font-medium rounded-md bg-indigo-50 text-indigo-700 transition">
+                    회원가입
+                </button>
+                <button id="tab-admin-btn" onclick="switchTab('admin')" class="px-4 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition">
+                    회원 관리 대시보드
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- [TAB 1] 회원가입 폼 -->
+        <section id="tab-register" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 p-8 transition-all">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-extrabold text-gray-900">새 계정 생성</h2>
+                <p class="text-sm text-gray-500 mt-2">이메일 주소로 간편하게 가입하세요.</p>
+            </div>
+
+            <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-5">
+                <!-- 이메일 입력 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">이메일 주소</label>
+                    <input type="email" id="email" required placeholder="example@domain.com"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <!-- 비밀번호 입력 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">비밀번호</label>
+                    <input type="password" id="password" required placeholder="영문 포함 6자리 이상"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <!-- 비밀번호 확인 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">비밀번호 확인</label>
+                    <input type="password" id="password-confirm" required placeholder="비밀번호 재입력"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <!-- 이름 입력 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">이름</label>
+                    <input type="text" id="username" required placeholder="홍길동"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <!-- 전화번호 입력 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">전화번호</label>
+                    <input type="tel" id="phone" required placeholder="010-1234-5678"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <!-- 개인정보 수집 동의 (필수) -->
+                <div class="flex items-start mt-4">
+                    <div class="flex items-center h-5">
+                        <input id="privacy" type="checkbox" required
+                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="privacy" class="font-medium text-gray-700">[필수] 개인정보 수집 및 이용 동es</label>
+                        <p class="text-xs text-gray-500 mt-0.5">제공해주신 이름과 전화번호는 회원 관리 목적으로만 안전하게 보관됩니다.</p>
+                    </div>
+                </div>
+
+                <!-- 제출 버튼 -->
+                <button type="submit"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    가입하기
+                </button>
+            </form>
+        </section>
+
+        <!-- [TAB 2] 회원 관리 대시보드 -->
+        <section id="tab-admin" class="hidden bg-white rounded-2xl shadow-xl border border-gray-100 p-8 transition-all">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-gray-200 mb-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-gray-900">가입 회원 관리 명부</h2>
+                    <p class="text-sm text-gray-500 mt-1">Supabase 실시간 동기화 명단입니다.</p>
+                </div>
+                <button onclick="fetchMembers()" class="mt-4 sm:mt-0 inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition">
+                    새로고침 ↻
+                </button>
+            </div>
+
+            <!-- 테이블 레이아웃 -->
+            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 text-left text-sm text-gray-600">
+                    <thead class="bg-gray-50 font-semibold text-gray-700 uppercase tracking-wider text-xs">
+                        <tr>
+                            <th class="px-6 py-4">가입일시</th>
+                            <th class="px-6 py-4">이름</th>
+                            <th class="px-6 py-4">이메일</th>
+                            <th class="px-6 py-4">전화번호</th>
+                            <th class="px-6 py-4">개인정보동의</th>
+                        </tr>
+                    </thead>
+                    <tbody id="member-table-body" class="divide-y divide-gray-200 bg-white">
+                        <!-- JS가 데이터를 동적으로 주입합니다 -->
+                        <tr>
+                            <td colspan="5" class="px-6 py-10 text-center text-gray-400">데이터를 불러오는 중입니다...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-400">
+        &copy; 2026 Reusable Membership Page System. Integrated with Supabase.
+    </footer>
+
+    <!-- 자바스크립트 로직 -->
+    <script>
+        // GitHub 환경변수 연동을 고려한 환경설정 변수 분리
+        // (로컬 혹은 단순 HTML 실행 시에는 아래 문자열이 그대로 사용됩니다)
+        const SUPABASE_URL = window.process?.env?.SUPABASE_URL || "https://fbjkiornlqshbrkeovbu.supabase.co";
+        const SUPABASE_KEY = window.process?.env?.SUPABASE_KEY || "sb_publishable_spFZwW8boZJkpOo1HA5Wcg_nReKh-04";
+
+        // Supabase 클라이언트 초기화
+        const supabase = bootstrap.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 일회용/임의 메일 도메인 필터링 리스트
+        const bannedDomains = ['mailinator.com', 'trashmail.com', 'yopmail.com', 'tempmail.com', 'test.com'];
+
+        // 탭 전환 시스템
+        function switchTab(tab) {
+            const regTab = document.getElementById('tab-register');
+            const adminTab = document.getElementById('tab-admin');
+            const regBtn = document.getElementById('tab-register-btn');
+            const adminBtn = document.getElementById('tab-admin-btn');
+
+            if (tab === 'register') {
+                regTab.classList.remove('hidden');
+                adminTab.classList.add('hidden');
+                regBtn.className = "px-4 py-2 text-sm font-medium rounded-md bg-indigo-50 text-indigo-700 transition";
+                adminBtn.className = "px-4 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition";
+            } else {
+                regTab.classList.add('hidden');
+                adminTab.classList.remove('hidden');
+                adminBtn.className = "px-4 py-2 text-sm font-medium rounded-md bg-indigo-50 text-indigo-700 transition";
+                regBtn.className = "px-4 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition";
+                fetchMembers(); // 대시보드 진입 시 자동 새로고침
+            }
+        }
+
+        // 회원가입 비즈니스 로직 및 벨리데이션
+        async function handleSignup(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('password-confirm').value;
+            const name = document.getElementById('username').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const privacyChecked = document.getElementById('privacy').checked;
+
+            // 1. 임의/일회용 이메일 도메인 점검
+            const domain = email.split('@')[1]?.toLowerCase();
+            if (bannedDomains.includes(domain)) {
+                alert('보안 정책상 일회용 또는 테스트용 임의 이메일 계정은 사용할 수 없습니다.');
+                return;
+            }
+
+            // 2. 비밀번호 제약 조건 검증 (6자리 이상, 영문 1개 이상 필수)
+            const passwordRegex = /^(?=.*[a-zA-Z]).{6,}$/;
+            if (!passwordRegex.test(password)) {
+                alert('비밀번호는 영문(영어)을 최소 1개 이상 포함하여 6자리 이상으로 작성해 주세요.');
+                return;
+            }
+
+            // 3. 비밀번호 크로스 체크 (확인 점검)
+            if (password !== passwordConfirm) {
+                alert('입력하신 두 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
+                return;
+            }
+
+            // 4. 필수 개인정보 동의 체크
+            if (!privacyChecked) {
+                alert('이름과 전화번호 수집을 위한 개인정보 이용 약관에 동의하셔야 회원가입이 가능합니다.');
+                return;
+            }
+
+            try {
+                // Supabase DB에 회원 정보 데이터 삽입 (이메일 유니크 중복 검증 포함)
+                const { data, error } = await supabase
+                    .from('members')
+                    .insert([
+                        { email, name, phone, privacy_agreed: privacyChecked }
+                    ])
+                    .select();
+
+                if (error) {
+                    // Supabase에서 반환하는 이메일 중복 에러 코드 대응 (23505 고유값 위반)
+                    if (error.code === '23505') {
+                        alert('이미 등록된 이메일 주소입니다. 다른 이메일을 사용해 주세요.');
+                    } else {
+                        throw error;
+                    }
+                    return;
+                }
+
+                alert(`${name}님, 회원가입이 성공적으로 완료되었습니다!`);
+                document.getElementById('signup-form').reset();
+                switchTab('admin'); // 가입 성공 후 즉시 명부 탭으로 이동
+
+            } catch (err) {
+                console.error(err);
+                alert('회원가입 처리 중 알 수 없는 서버 오류가 발생했습니다.');
+            }
+        }
+
+        // 회원 목록 불러오기 데이터베이스 연동
+        async function fetchMembers() {
+            const tbody = document.getElementById('member-table-body');
+            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-gray-500">데이터 동기화 중...</td></tr>`;
+
+            try {
+                const { data, error } = await supabase
+                    .from('members')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-gray-400">등록된 회원이 없습니다.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.map(member => {
+                    const localTime = new Date(member.created_at).toLocaleString('ko-KR');
+                    return `
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">${localTime}</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${escapeHtml(member.name)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-600">${escapeHtml(member.email)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-600">${escapeHtml(member.phone)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">동의완료</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-red-500 font-medium">데이터를 불러오지 못했습니다. 키 설정과 네트워크를 확인하세요.</td></tr>`;
+            }
+        }
+
+        // XSS 방지를 위한 텍스트 이스케이프 함수
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+    </script>
+</body>
 </html>
